@@ -50,10 +50,6 @@
         th:if / th:unless: 조건부 렌더링
         th:unless = th:if 의 반대 (조건이 false일 때 렌더링)
     -->
-    <div class="empty-msg" th:unless="${#lists.isEmpty(products)}">
-        <!-- 상품이 있을 때는 이 div를 숨깁니다 (th:unless 사용) -->
-    </div>
-
     <div class="empty-msg" th:if="${#lists.isEmpty(products)}">
         등록된 상품이 없습니다. 새 상품을 등록해 주세요.
     </div>

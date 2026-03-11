@@ -68,14 +68,11 @@ public class DbConfig {
 
     private Properties hibernateProperties() {
         Properties props = new Properties();
-        props.setProperty("hibernate.dialect",
-                "org.hibernate.dialect.MySQLDialect");    // MySQL SQL 문법 사용
         props.setProperty("hibernate.hbm2ddl.auto",
                 "none");                                  // DDL 자동 실행 안 함 (init.sql이 담당)
         props.setProperty("hibernate.show_sql",  "true"); // 실행 SQL 콘솔 출력 (학습용)
         props.setProperty("hibernate.format_sql", "true"); // SQL 줄바꿈 출력
-        props.setProperty("hibernate.temp.use_jdbc_metadata_defaults",
-                "false");                                 // 시작 시 DB 연결 없이 초기화
+        // dialect, allow_jdbc_metadata_access 생략 → Hibernate가 JDBC 메타데이터로 자동 감지
         return props;
     }
 

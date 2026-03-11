@@ -1,6 +1,6 @@
 # Spring MVC 상품 관리 시스템 (교육용)
 
-Spring Boot 없이 **순수 Spring MVC 6.x** 로 구축한 교육용 웹 애플리케이션입니다.
+Spring Boot 없이 **순수 Spring MVC 7.x** 로 구축한 교육용 웹 애플리케이션입니다.
 
 ---
 
@@ -12,7 +12,7 @@ Browser
   │ HTTP Request (예: GET /products)
   ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                     Apache Tomcat 10.x                          │
+│                     Apache Tomcat 11.x                          │
 │  ┌──────────────────────────────────────────────────────────┐   │
 │  │               DispatcherServlet (프론트 컨트롤러)          │   │
 │  │  - 모든 요청의 단일 진입점                                  │   │
@@ -49,7 +49,7 @@ Browser
 └─────────────────┼───────────────────────────────────────────────┘
                   │ JDBC
                   ▼
-          MySQL 8.x (Docker)
+          MySQL 9.x (Docker)
 ```
 
 ---
@@ -57,10 +57,12 @@ Browser
 ## 프로젝트 구조
 
 ```
-helloSpringMVC2/
+helloSpringMVC/
 ├── pom.xml                          # Maven 빌드 설정 및 의존성
 ├── docker-compose.yml               # MySQL + Tomcat 컨테이너 설정
 ├── init.sql                         # DB 초기화 스크립트 (테이블 생성 + 샘플 데이터)
+├── mysql-data/                      # MySQL 데이터 파일 저장 폴더 (자동 생성, git 제외)
+├── .gitignore
 ├── README.md
 └── src/
     └── main/
@@ -92,11 +94,11 @@ helloSpringMVC2/
 | 분류 | 기술 | 버전 |
 |------|------|------|
 | 언어 | Java | 21 (LTS) |
-| 웹 프레임워크 | Spring MVC | 6.2.x |
+| 웹 프레임워크 | Spring MVC | 7.0.x |
 | 뷰 엔진 | Thymeleaf | 3.1.x |
-| ORM | Hibernate (JPA) | 6.4.x |
-| 데이터베이스 | MySQL | 8.0 |
-| 서블릿 컨테이너 | Apache Tomcat | 10.1 |
+| ORM | Hibernate (JPA) | 7.0.x |
+| 데이터베이스 | MySQL | 9.1 |
+| 서블릿 컨테이너 | Apache Tomcat | 11.0 |
 | 빌드 도구 | Maven | 3.x |
 | 인프라 | Docker Compose | - |
 
@@ -121,11 +123,14 @@ mvn clean package -DskipTests
 
 ```bash
 # 컨테이너 시작 (백그라운드)
-docker-compose up -d
+docker compose up -d
 
 # 로그 확인 (Ctrl+C로 종료)
-docker-compose logs -f
+docker compose logs -f
 ```
+
+컨테이너가 시작되면 프로젝트 폴더 안에 `mysql-data/` 디렉터리가 자동으로 생성되고,
+MySQL 데이터 파일이 그 안에 저장됩니다. 탐색기(또는 `ls`)로 직접 확인할 수 있습니다.
 
 ### 3단계: 브라우저 접속
 
@@ -136,11 +141,11 @@ http://localhost:8080/products
 ### 컨테이너 중지
 
 ```bash
-# 컨테이너 중지 (데이터 보존)
-docker-compose down
+# 컨테이너 중지 (mysql-data/ 폴더가 남아있으므로 데이터 보존)
+docker compose down
 
-# 컨테이너 + 볼륨 모두 삭제 (DB 데이터 초기화)
-docker-compose down -v
+# DB 데이터까지 초기화하려면 폴더를 직접 삭제
+rm -rf ./mysql-data
 ```
 
 ---

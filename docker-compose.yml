@@ -1,5 +1,3 @@
-version: "3.9"
-
 # =====================================================================
 # Docker Compose - 개발 환경 구성
 # =====================================================================
@@ -20,10 +18,10 @@ version: "3.9"
 services:
 
   # ───────────────────────────────────────────────────────────────────
-  # MySQL 8.x 서비스
+  # MySQL 9.x 서비스
   # ───────────────────────────────────────────────────────────────────
   mysql:
-    image: mysql:8.0
+    image: mysql:9.1
     container_name: spring-mvc-mysql
 
     # 컨테이너 재시작 정책: Docker 재시작 시 자동으로 MySQL도 시작
@@ -43,10 +41,13 @@ services:
       - "3306:3306"
 
     volumes:
-      # 1. 데이터 영속성: 컨테이너를 삭제해도 DB 데이터가 보존됩니다.
-      - mysql-data:/var/lib/mysql
+      # 1. 데이터 영속성: 프로젝트 폴더 안의 mysql-data/ 디렉터리에 DB 파일이 저장됩니다.
+      #    컨테이너를 삭제해도 이 폴더가 남아있으면 데이터가 보존됩니다.
+      #    탐색기(또는 ls)로 직접 확인할 수 있습니다.
+      #    형식: 호스트경로:컨테이너경로
+      - ./mysql-data:/var/lib/mysql
 
-      # 2. 초기화 스크립트: 볼륨이 비어있을 때 자동으로 실행됩니다.
+      # 2. 초기화 스크립트: 볼륨이 비어있을 때(최초 실행 시) 자동으로 실행됩니다.
       #    /docker-entrypoint-initdb.d/ 폴더의 .sql 파일이 순서대로 실행됩니다.
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
 
@@ -64,13 +65,13 @@ services:
       --explicit-defaults-for-timestamp=1
 
   # ───────────────────────────────────────────────────────────────────
-  # Apache Tomcat 10.x 서비스
+  # Apache Tomcat 11.x 서비스
   # ───────────────────────────────────────────────────────────────────
-  # Tomcat 10.x: Jakarta EE 10 (jakarta.* 패키지) 지원
-  # Spring 6.x는 Jakarta EE 9+ 를 요구하므로 Tomcat 10.x 사용 필수
-  # (Tomcat 9.x는 javax.* 패키지 사용 → 호환 불가)
+  # Tomcat 11.x: Jakarta EE 11 / Servlet 6.1 스펙 구현
+  # Spring 7.x는 Servlet 6.1+ 를 요구하므로 Tomcat 11.x 사용 필수
+  # (Tomcat 10.x는 Servlet 6.0 → Spring 7과 호환 불가)
   tomcat:
-    image: tomcat:10.1-jdk21
+    image: tomcat:11.0-jdk21
     container_name: spring-mvc-tomcat
 
     restart: unless-stopped
@@ -99,12 +100,5 @@ services:
         -Dfile.encoding=UTF-8
         -Duser.timezone=Asia/Seoul
 
-# ─────────────────────────────────────────────────────────────────────
-# 명명된 볼륨 (Named Volumes)
-# 컨테이너 외부에 데이터를 영속적으로 저장합니다.
-# docker-compose down 시 볼륨은 삭제되지 않습니다.
-# docker-compose down -v  : 볼륨까지 함께 삭제
-# ─────────────────────────────────────────────────────────────────────
-volumes:
-  mysql-data:
-    driver: local
+# 데이터 삭제 방법:
+#   rm -rf ./mysql-data    (폴더째 삭제하면 DB 초기화)
