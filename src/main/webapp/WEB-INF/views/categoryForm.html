@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<!--
+    <form th:action="@{/categories/create}" th:object="${categoryForm}" method="post">
+    // th:field가 name, id, value를 자동 설정
+    <input type="text" th:field="*{name}" placeholder="카테고리 이름"/>
+    // th:errors: BindingResult 오류(중복/공백) 메시지 자동 표시
+    <span th:errors="*{name}" style="color:red"></span>
+    <button type="submit">등록</button>
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>카테고리 등록</title>
+    </head>
+
+    <body>
+        <h1>카테고리 등록</h1>
+        <form th:action="@{/categories/create}" th:object="${categoryForm}" method="post">
+            <div>
+                <label>카테고리 이름:</label>
+                <input type="text" th:field="*{name}" placeholder="카테고리 이름 입력"/>
+                <span th:errors="*{name}" style="color:red"></span>
+            </div>
+            <br>
+            <button type="submit">등록</button>
+            <a th:href="@{/categories}">취소</a>
+        </form>
+        <footer>
+            <p th:text="${'실습 수행 일시: ' + #temporals.format(#temporals.createNow(), 'yyyy-MM-dd HH:mm:ss') + ' | 학번: 2071248 | 성명: 이시형'}">
+            </p>
+        </footer>
+    </body>
+</html>
